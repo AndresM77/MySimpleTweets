@@ -5,8 +5,10 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 
 import com.codepath.apps.restclienttemplate.models.Tweet;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -14,6 +16,7 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.parceler.Parcels;
 
 import java.util.ArrayList;
 
@@ -45,6 +48,12 @@ public class TimelineActivity extends AppCompatActivity {
         //set adapter
         rvTweets.setAdapter(tweetAdapter);
         populateTimeline();
+
+        // Find the toolbar view inside the activity layout
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        // Sets the Toolbar to act as the ActionBar for this Activity window.
+        // Make sure the toolbar exists in the activity and is not null
+        setSupportActionBar(toolbar);
     }
 
     //@SuppressLint("ResourceType")
@@ -52,10 +61,20 @@ public class TimelineActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu, menu);
-        Intent i = new Intent(this, ComposeActivity.class);
-
-        startActivityForResult(i, REQUEST_CODE); // brings up the second activity
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle presses on the action bar items
+        switch (item.getItemId()) {
+            case R.id.ivPostBtn:
+                Intent i = new Intent(TimelineActivity.this, ComposeActivity.class);
+                startActivityForResult(i, REQUEST_CODE); // brings up the second activity
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     @Override
@@ -64,7 +83,7 @@ public class TimelineActivity extends AppCompatActivity {
         // check request code and result code first
 
         // Use data parameter
-        Tweet tweet = (Tweet) data.getSerializableExtra("tweet");
+        Tweet tweet = Parcels.unwrap(data.getParcelableExtra("tweet"));
         tweets.add(0, tweet);
         tweetAdapter.notifyItemInserted(0);
         rvTweets.scrollToPosition(0);
