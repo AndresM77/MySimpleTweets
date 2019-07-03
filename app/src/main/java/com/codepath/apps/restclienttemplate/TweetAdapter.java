@@ -11,6 +11,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
+import com.bumptech.glide.request.RequestOptions;
 import com.codepath.apps.restclienttemplate.models.Tweet;
 
 import java.text.SimpleDateFormat;
@@ -50,7 +52,10 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
         viewHolder.tvBody.setText(tweet.body);
         viewHolder.tvTimeStamp.setText(getRelativeTimeAgo(tweet.createdAt));
 
-        Glide.with(context).load(tweet.user.profileImageUrl).into(viewHolder.ivProfileImage);
+        Glide.with(context)
+                .load(tweet.user.profileImageUrl)
+                .apply(RequestOptions.bitmapTransform(new RoundedCorners(14)))
+                .into(viewHolder.ivProfileImage);
     }
 
     // getRelativeTimeAgo("Mon Apr 01 21:16:23 +0000 2014");

@@ -4,7 +4,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/ivPostBtn"
-        android:icon="@drawable/mr_button_light"
+        android:icon="@drawable/ic_vector_compose"
         app:showAsAction="ifRoom"
         android:title="Compose">
     </item>

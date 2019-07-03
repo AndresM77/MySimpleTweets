@@ -19,4 +19,8 @@
     <color name="inline_action_pressed">@color/medium_gray_50</color>
     <color name="inline_action_retweet">@color/medium_green</color>
     <color name="inline_action_retweet_pressed">@color/medium_gray_50</color>
+    <color name="dark_mode_0">#ffffff</color>
+    <color name="dark_mode_1">#c51f5d</color>
+    <color name="dark_mode_2">#243447</color>
+    <color name="dark_mode_3">#141d26</color>
 </resources>
