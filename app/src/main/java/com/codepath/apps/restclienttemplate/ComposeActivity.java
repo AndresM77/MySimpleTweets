@@ -32,6 +32,29 @@ public class ComposeActivity extends AppCompatActivity {
         client = TwitterApp.getRestClient(this);
         // get user text
         final TextView usrText = findViewById(R.id.ivEditText);
+        final TextView txtCtr = findViewById(R.id.ivTextCtr);
+
+        //Creating new thread so items are updated every second
+        Thread t = new Thread() {
+            @Override
+            public void run() {
+                while (!isInterrupted()) {
+                    try {
+                        Thread.sleep(1000);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                //Setting size of usrText string to value outputted by txtCtr
+                                txtCtr.setText(String.format("%d/280", usrText.length()));
+                            }
+                        });
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        };
+        t.start();
 
         tweetBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -44,7 +67,7 @@ public class ComposeActivity extends AppCompatActivity {
                             post = Tweet.fromJSON(response);
                             Intent i = new Intent(ComposeActivity.this, TimelineActivity.class);
                             i.putExtra("tweet", Parcels.wrap(post));
-                            setResult(20, i);
+                            setResult(REQUEST_CODE, i);
                             finish();
                         } catch (JSONException e) {
                             e.printStackTrace();
