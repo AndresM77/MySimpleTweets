@@ -58,4 +58,14 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@color/dark_mode_0" />
+
+    <ImageButton
+        android:id="@+id/ivRplyBtn"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_below="@+id/tvBody"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="5dp"
+        android:layout_toEndOf="@+id/ivProfileImage"
+        app:srcCompat="@android:drawable/sym_action_chat" />
 </RelativeLayout>

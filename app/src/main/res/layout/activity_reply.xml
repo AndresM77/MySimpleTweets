@@ -5,11 +5,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ComposeActivity"
+    tools:context=".ReplyActivity"
     android:background="@color/dark_mode_3">
 
     <EditText
-        android:id="@+id/ivEditText"
+        android:id="@+id/ivReplyTxt"
         android:layout_width="292dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -19,18 +19,18 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/ivTweetBtn"
+        android:id="@+id/ivSendRply"
         android:layout_width="88dp"
         android:layout_height="24dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:background="@color/dark_mode_0"
-        android:text="Tweet"
+        android:text="Reply"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/ivTextCtr"
+        android:id="@+id/ivTextCtr2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -38,6 +38,6 @@
         android:textColor="@color/dark_mode_0"
         android:text="0/280"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ivEditText" />
+        app:layout_constraintTop_toBottomOf="@+id/ivReplyTxt" />
 
 </android.support.constraint.ConstraintLayout>
