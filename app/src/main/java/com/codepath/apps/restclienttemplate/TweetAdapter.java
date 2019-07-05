@@ -10,23 +10,29 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
 import com.codepath.apps.restclienttemplate.models.Tweet;
+import com.loopj.android.http.JsonHttpResponseHandler;
 
+import org.json.JSONObject;
 import org.parceler.Parcels;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
 
+import cz.msebera.android.httpclient.Header;
+
 public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> {
 
     private List<Tweet> mTweets;
     private Context context;
+    TwitterClient client;
     //pass in tweets array to constructor
     public TweetAdapter(List<Tweet> tweets) {
         mTweets = tweets;
@@ -47,7 +53,7 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
     //bind values based on position of element
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder viewHolder, int position) {
+    public void onBindViewHolder(@NonNull final ViewHolder viewHolder, int position) {
         //get data according to position
         final Tweet tweet = mTweets.get(position);
 
@@ -55,6 +61,8 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
         viewHolder.tvUsername.setText(tweet.user.name);
         viewHolder.tvBody.setText(tweet.body);
         viewHolder.tvTimeStamp.setText(getRelativeTimeAgo(tweet.createdAt));
+        viewHolder.tvRetweetCnt.setText(String.valueOf(tweet.retweetCount));
+        viewHolder.tvLikeCnt.setText(String.valueOf(tweet.favCount));
         viewHolder.ibReply.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -64,6 +72,40 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
                 context.startActivity(i);
             }
         });
+        if(tweet.isRetweeted) {
+            viewHolder.ibRetweet.setImageResource(R.drawable.ic_retweet_pressed);
+        }
+        if(tweet.isFavorited) {
+            viewHolder.ibLike.setImageResource(R.drawable.ic_heart_pressed);
+        }
+        viewHolder.ibRetweet.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Retweet functionality
+                client = TwitterApp.getRestClient(context);
+                retweet(tweet, viewHolder);
+            }
+        });
+        viewHolder.ibLike.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Like functionality
+                client = TwitterApp.getRestClient(context);
+                favorite(tweet, viewHolder);
+            }
+        });
+        /*
+        //Setting up detail view
+        viewHolder.rlTweet.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //change view to detail view
+                Intent i = new Intent(context, DetailView.class);
+                i.putExtra("tweet", Parcels.wrap(tweet));
+                context.startActivity(i);
+            }
+        });
+        */
 
         Glide.with(context)
                 .load(tweet.user.profileImageUrl)
@@ -101,9 +143,15 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
         public TextView tvUsername;
         public TextView tvBody;
         public TextView tvTimeStamp;
+        public TextView tvRetweetCnt;
+        public TextView tvLikeCnt;
         public ImageButton ibReply;
+        public ImageButton ibRetweet;
+        public ImageButton ibLike;
+        public RelativeLayout rlTweet;
 
-        public ViewHolder(View itemView) {
+
+        public ViewHolder(final View itemView) {
             super(itemView);
 
             // perform findViewById lookups
@@ -113,6 +161,13 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
             tvBody = (TextView) itemView.findViewById(R.id.tvBody);
             tvTimeStamp = (TextView) itemView.findViewById(R.id.tvTimeStamp);
             ibReply = (ImageButton) itemView.findViewById(R.id.ivRplyBtn);
+            ibRetweet = (ImageButton) itemView.findViewById(R.id.ivReTweet);
+            ibLike = (ImageButton) itemView.findViewById(R.id.ivLike);
+            rlTweet = (RelativeLayout) itemView.findViewById(R.id.ivTweet);
+            tvRetweetCnt = (TextView) itemView.findViewById(R.id.tvRetweetCount);
+            tvLikeCnt = (TextView) itemView.findViewById(R.id.tvLikeCount);
+
+
         }
     }
 
@@ -126,5 +181,65 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
     public void addAll(List<Tweet> list) {
         mTweets.addAll(list);
         notifyDataSetChanged();
+    }
+
+    public void favorite(final Tweet tweet, final ViewHolder itemView){
+        if (tweet.isFavorited) {
+            client.unFavTweet(tweet.uid, new JsonHttpResponseHandler(){
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                    itemView.ibLike.setImageResource(R.drawable.ic_heart_unpressed);
+                    super.onSuccess(statusCode, headers, response);
+                }
+
+                @Override
+                public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                    super.onFailure(statusCode, headers, responseString, throwable);
+                }
+            });
+        } else {
+            client.favTweet(tweet.uid, new JsonHttpResponseHandler(){
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                    itemView.ibLike.setImageResource(R.drawable.ic_heart_pressed);
+                    super.onSuccess(statusCode, headers, response);
+                }
+
+                @Override
+                public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                    super.onFailure(statusCode, headers, responseString, throwable);
+                }
+            });
+        }
+
+    }
+    public void retweet(Tweet tweet, final ViewHolder itemView) {
+        if (tweet.isRetweeted) {
+            client.unReTweet(tweet.uid, new JsonHttpResponseHandler() {
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                    super.onSuccess(statusCode, headers, response);
+                    itemView.ibRetweet.setImageResource(R.drawable.ic_retweet_unpressed);
+                }
+
+                @Override
+                public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                    super.onFailure(statusCode, headers, responseString, throwable);
+                }
+            });
+        } else {
+            client.reTweet(tweet.uid, new JsonHttpResponseHandler() {
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                    itemView.ibRetweet.setImageResource(R.drawable.ic_retweet_pressed);
+                    super.onSuccess(statusCode, headers, response);
+                }
+
+                @Override
+                public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                    super.onFailure(statusCode, headers, responseString, throwable);
+                }
+            });
+        }
     }
 }
