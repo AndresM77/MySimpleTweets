@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -111,6 +112,11 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
                 .load(tweet.user.profileImageUrl)
                 .apply(RequestOptions.bitmapTransform(new RoundedCorners(14)))
                 .into(viewHolder.ivProfileImage);
+        if (tweet.mediaUrl != null) {
+            Glide.with(context)
+                    .load(tweet.mediaUrl)
+                    .into(viewHolder.ivBodyImage);
+        }
     }
 
     // getRelativeTimeAgo("Mon Apr 01 21:16:23 +0000 2014");
@@ -140,6 +146,7 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public ImageView ivProfileImage;
+        public ImageView ivBodyImage;
         public TextView tvUsername;
         public TextView tvBody;
         public TextView tvTimeStamp;
@@ -166,6 +173,7 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
             rlTweet = (RelativeLayout) itemView.findViewById(R.id.ivTweet);
             tvRetweetCnt = (TextView) itemView.findViewById(R.id.tvRetweetCount);
             tvLikeCnt = (TextView) itemView.findViewById(R.id.tvLikeCount);
+            ivBodyImage = (ImageView) itemView.findViewById(R.id.ivBodyImage);
 
 
         }
@@ -237,6 +245,7 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
 
                 @Override
                 public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                    Log.d("RETWEET","CANNOT RETWEET WRONG API");
                     super.onFailure(statusCode, headers, responseString, throwable);
                 }
             });

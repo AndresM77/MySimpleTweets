@@ -17,6 +17,7 @@ public class Tweet {
     public int favCount;
     public int retweetCount;
     public int replyCount;
+    public String mediaUrl;
 
     public Tweet(){
 
@@ -35,6 +36,12 @@ public class Tweet {
         tweet.favCount = jsonObject.getInt("favorite_count");
         tweet.isRetweeted = jsonObject.getBoolean("retweeted");
         tweet.retweetCount = jsonObject.getInt("retweet_count");
+        try {
+            tweet.mediaUrl = ((JSONObject)(jsonObject.getJSONObject("entities").getJSONArray("media").get(0))).getString("media_url_https");
+            tweet.mediaUrl += "?format=jpg&name=small";
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
         //object only available with prenium and enterprise products
         //tweet.replyCount = jsonObject.getInt("reply_count");
 
