@@ -197,7 +197,13 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                     itemView.ibLike.setImageResource(R.drawable.ic_heart_unpressed);
-                    itemView.tvLikeCnt.setText(String.valueOf(tweet.favCount-1));
+                    itemView.tvLikeCnt.setText(String.valueOf(tweet.favCount));
+                    tweet.isFavorited = false;
+                }
+
+                @Override
+                public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                    Log.d("LIKE","CANNOT LIKE WRONG API");
                 }
 
                 @Override
@@ -211,6 +217,12 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
                 public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                     itemView.ibLike.setImageResource(R.drawable.ic_heart_pressed);
                     itemView.tvLikeCnt.setText(String.valueOf(tweet.favCount+1));
+                    tweet.isFavorited = true;
+                }
+
+                @Override
+                public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                    Log.d("LIKE","CANNOT LIKE WRONG API");
                 }
 
                 @Override
@@ -227,7 +239,13 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                     itemView.ibRetweet.setImageResource(R.drawable.ic_retweet_unpressed);
-                    itemView.tvRetweetCnt.setText(String.valueOf(tweet.retweetCount-1));
+                    itemView.tvRetweetCnt.setText(String.valueOf(tweet.retweetCount));
+                    tweet.isRetweeted = false;
+                }
+
+                @Override
+                public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                    Log.d("RETWEET","CANNOT RETWEET WRONG API");
                 }
 
                 @Override
@@ -241,6 +259,12 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
                 public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                     itemView.ibRetweet.setImageResource(R.drawable.ic_retweet_pressed);
                     itemView.tvRetweetCnt.setText(String.valueOf(tweet.retweetCount+1));
+                    tweet.isRetweeted = true;
+                }
+
+                @Override
+                public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                    Log.d("RETWEET","CANNOT RETWEET WRONG API");
                 }
 
                 @Override
