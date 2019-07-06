@@ -113,9 +113,13 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
                 .apply(RequestOptions.bitmapTransform(new RoundedCorners(14)))
                 .into(viewHolder.ivProfileImage);
         if (tweet.mediaUrl != null) {
+            viewHolder.ivBodyImage.setVisibility(View.VISIBLE);
             Glide.with(context)
                     .load(tweet.mediaUrl)
                     .into(viewHolder.ivBodyImage);
+
+        } else {
+            viewHolder.ivBodyImage.setVisibility(View.GONE);
         }
     }
 
