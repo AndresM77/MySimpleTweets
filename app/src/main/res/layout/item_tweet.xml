@@ -124,5 +124,6 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/tvBody"
         android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
         app:srcCompat="@android:color/black" />
 </RelativeLayout>
